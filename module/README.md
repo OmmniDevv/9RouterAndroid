@@ -3,7 +3,7 @@
 # 9RouterAndroid
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Version: 1.0.0](https://img.shields.io/badge/Version-1.0.1-blue.svg)](https://github.com/OmmniDevv/9RouterAndroid/releases/tag/v1.0.1)
+[![Version: 1.0.0](https://img.shields.io/badge/Version-1.0.2-blue.svg)](https://github.com/OmmniDevv/9RouterAndroid/releases/tag/v1.0.2)
 [![Platform: Android aarch64](https://img.shields.io/badge/Platform-Android%20aarch64-orange.svg)](#syarat--requirements)
 
 Module Magisk / KernelSU / APatch untuk menjalankan 9Router di HP Android
@@ -48,7 +48,7 @@ Yang didapat setelah instal:
 
 ### Instalasi
 
-1. Unduh `9RouterAndroid-v1.0.1.zip` dari halaman
+1. Unduh `9RouterAndroid-v1.0.2.zip` dari halaman
    [Releases](https://github.com/OmmniDevv/9RouterAndroid/releases).
 2. Flash zip itu di Magisk, KernelSU, atau APatch Manager, dalam keadaan
    internet menyala.
@@ -223,6 +223,34 @@ root setelah module dihapus.
 
 ### Changelog
 
+#### v1.0.2 (2026-10-28)
+
+- Exec via KernelSU seperti HermesAndroid: `su -c 9router` dan
+  `su -c 9router.service status` langsung bisa dipakai setelah flash,
+  tanpa harus reboot dulu. Sebelumnya link ke /data/adb/ksu/bin baru
+  dibuat service.sh saat boot, dan overlay system/bin tidak selalu
+  muncul di shell KernelSU.
+- WebUI = dashboard bawaan 9router sendiri
+  (http://127.0.0.1:20128/dashboard), bukan server baru, bukan port
+  baru, dan tidak perlu nyala-ulang yang ribet. Login tetap pakai
+  password awal 9router (lihat `su -c '9router password'`, atau
+  `su -c '9router webui'` yang menyalakan server kalau belum jalan
+  lalu menampilkan URL-nya). Action button juga membuka dashboard ini.
+
+#### v1.0.2 (2026-10-28)
+
+- KernelSU exec like HermesAndroid: `su -c 9router` and
+  `su -c 9router.service status` work right after flashing, without
+  waiting for a reboot. Previously the /data/adb/ksu/bin link was only
+  created by service.sh at boot, and the system/bin overlay does not
+  always show up in KernelSU shells.
+- WebUI = the built-in 9router dashboard itself
+  (http://127.0.0.1:20128/dashboard), not a new server, not a new
+  port, and no complicated restart dance. Login still uses the
+  9router initial password (see `su -c '9router password'`, or
+  `su -c '9router webui'`, which starts the server if needed and
+  prints the URL). The Action button opens this same dashboard.
+
 #### v1.0.1 (2026-10-28)
 
 - Perbaikan penting: ID module diubah dari `9routerandroid` menjadi
@@ -276,7 +304,7 @@ After installation you get:
 
 ### Installation
 
-1. Download `9RouterAndroid-v1.0.1.zip` from
+1. Download `9RouterAndroid-v1.0.2.zip` from
    [Releases](https://github.com/OmmniDevv/9RouterAndroid/releases).
 2. Flash that zip in Magisk, KernelSU, or APatch Manager while online.
 3. Wait for the flash log to finish. The module runs a one-time

@@ -207,6 +207,16 @@ fi
 rm -rf "$H/tmp"; mkdir -p "$H/tmp"
 
 set_perm "$MODPATH/system/bin/9router" root root 0755
+set_perm "$MODPATH/system/bin/9router.service" root root 0755
+
+# KernelSU exec, langsung tanpa reboot (sebelumnya link baru dibuat service.sh
+# saat boot, jadi su -c 9router gagal kalau belum reboot, dan overlay
+# system/bin tidak selalu muncul di shell KernelSU — pola yang sama dipakai
+# HermesAndroid untuk /data/adb/ksu/bin/hermes).
+for d in /data/adb/ksu/bin /data/adb/ap/bin; do
+  [ -d "$d" ] && ln -sf "$H/bin/9router" "$d/9router"
+  [ -f "$MODPATH/system/bin/9router.service" ] && [ -d "$d" ] && cp "$MODPATH/system/bin/9router.service" "$d/9router.service" && chmod 755 "$d/9router.service"
+done
 
 echo "done" > "$H/.install_state"
 chmod 600 "$H/.install_state"
@@ -215,7 +225,10 @@ log "===== Install complete ====="
 ui_print ""
 ui_print "  Installation completed!"
 ui_print ""
-ui_print "  Reboot (or: su -c '9router start'), then:"
+ui_print "  CLI langsung bisa dipakai tanpa reboot (KernelSU):
+    su -c '9router status'
+    su -c '9router webui'
+  Reboot (or: su -c '9router start'), then:"
 ui_print "    su -c '9router status'"
 ui_print "    su -c '9router password'     # dashboard login"
 ui_print "  Dashboard: http://127.0.0.1:20128/dashboard"

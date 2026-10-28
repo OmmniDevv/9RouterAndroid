@@ -27,4 +27,5 @@ echo "API base  : http://127.0.0.1:$PORT/v1"
 [ -n "$PW" ] && echo "Password  : $PW   (initial — if you changed it in the dashboard, use that)"
 echo ""
 echo "CLI : su -c 9router status | log | update | link-hermes"
+echo "WebUI : su -c 9router webui   (dashboard bawaan, login pakai password awal)"
 exit 0

@@ -2,7 +2,7 @@
 # ============================================================
 # 9RouterAndroid — control script  (installed as bin/9router)
 #
-#   9router start|stop|restart|status|log [-f]|url|password
+#   9router start|stop|restart|status|log [-f]|url|password|webui
 #   9router config [set KEY VALUE]
 #   9router update [--check] [--version X] [--force]
 #   9router rollback
@@ -178,6 +178,21 @@ do_password() {
   pw=$(cfg initial_password "")
   echo "Dashboard password (initial): ${pw:-<none set, upstream default 123456>}"
   echo "If you changed it inside the dashboard, that new password is what counts."
+}
+
+do_webui() {
+  # WebUI = dashboard bawaan 9router sendiri, bukan server baru.
+  # Login tetap pakai password awal 9router (lihat: 9router password).
+  # Kalau server belum jalan, nyalakan dulu supaya dashboard bisa dibuka,
+  # jadi tidak perlu nyala-ulang manual yang ribet.
+  pid=$(server_pid)
+  [ -n "$pid" ] || do_start || return 1
+  port=$(cfg port 20128)
+  echo "WebUI (dashboard 9router): http://127.0.0.1:$port/dashboard"
+  echo "API base                  : http://127.0.0.1:$port/v1"
+  echo "Login                     : pakai password awal 9router (su -c '9router password')"
+  echo "                          (kalau sudah diubah di dashboard, pakai password baru itu)"
+  am start -a android.intent.action.VIEW -d "http://127.0.0.1:$port/dashboard" >/dev/null 2>&1 || true
 }
 
 do_config() {
@@ -430,6 +445,7 @@ case "${1:-status}" in
   log)           shift; do_log "$@" ;;
   url)           p=$(cfg port 20128); echo "Dashboard: http://127.0.0.1:$p/dashboard"; echo "API base : http://127.0.0.1:$p/v1" ;;
   password)      do_password ;;
+  webui)         do_webui ;;
   config)        shift; do_config "$@" ;;
   update)        shift; do_update "$@" ;;
   rollback)      do_rollback ;;

@@ -17,6 +17,14 @@ for d in /data/adb/ksu/bin /data/adb/ap/bin; do
   [ -d "$d" ] && ln -sf "$H/bin/9router" "$d/9router"
 done
 
+# Service controller, same pattern as HermesAndroid: copy (not symlink, so it
+# survives module updates) to the bin dirs that ship in every KSU/APatch root shell.
+SVC_SRC="/data/adb/modules/routerandroid/system/bin/9router.service"
+[ -f "$SVC_SRC" ] || SVC_SRC="${MODDIR:-/data/adb/modules/routerandroid}/system/bin/9router.service"
+for d in /data/adb/ksu/bin /data/adb/ap/bin; do
+  [ -f "$SVC_SRC" ] && [ -d "$d" ] && cp "$SVC_SRC" "$d/9router.service" && chmod 755 "$d/9router.service"
+done
+
 # Wait for the system to finish booting (max ~3 min)
 n=0
 while [ "$(getprop sys.boot_completed 2>/dev/null)" != "1" ] && [ "$n" -lt 90 ]; do

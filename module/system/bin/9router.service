@@ -1,0 +1,20 @@
+#!/system/bin/sh
+# 9router.service — service control for KernelSU/Magisk/APatch shells
+# Mirrors the HermesAndroid hermes.service pattern: this file is copied
+# to /data/adb/ksu/bin/9router.service (and ap/bin) at flash and on boot,
+# so it is on the root PATH even when module system/ overlays are not
+# materialised by KernelSU.
+H="/data/adb/9router"
+CTL="$H/bin/9router"
+PORT=$(grep -E '^port=' "$H/settings.ini" 2>/dev/null | tail -n 1 | cut -d= -f2 | tr -d '\r')
+[ -n "$PORT" ] || PORT=20128
+
+case "${1:-status}" in
+  start)   "$CTL" start ;;
+  stop)    "$CTL" stop ;;
+  restart) "$CTL" restart ;;
+  status)  "$CTL" status ;;
+  log)     shift; "$CTL" log "$@" ;;
+  webui)   shift; "$CTL" webui "$@" ;;
+  *)       echo "Usage: 9router.service {start|stop|restart|status|log|webui}"; echo "Dashboard: http://127.0.0.1:$PORT/dashboard"; echo "WebUI: http://127.0.0.1:$PORT/dashboard (login pakai password awal 9router)" ;;
+esac
