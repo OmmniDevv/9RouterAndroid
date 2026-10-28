@@ -62,7 +62,7 @@ sendiri di 9Router.
   draf sederhana awal.
 - glibc dibangun ulang dari Debian resmi, bukan disalin dari bundle
   module lain, agar asal pustaka jelas dan lisensi LGPL tercatat.
-- ID module diubah ke 9routerandroid dan semua variabel internal
+- ID module diubah ke routerandroid dan semua variabel internal
   diubah ke ROUTERANDROID_ agar konsisten dengan repo dan branding.
 - Uninstall mempertahankan settings.ini, berbeda dari versi percobaan
   yang menghapusnya, agar preferensi dan password awal tidak hilang

@@ -3,7 +3,7 @@
 # 9RouterAndroid
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Version: 1.0.0](https://img.shields.io/badge/Version-1.0.0-blue.svg)](https://github.com/OmmniDevv/9RouterAndroid/releases/tag/v1.0.0)
+[![Version: 1.0.0](https://img.shields.io/badge/Version-1.0.1-blue.svg)](https://github.com/OmmniDevv/9RouterAndroid/releases/tag/v1.0.1)
 [![Platform: Android aarch64](https://img.shields.io/badge/Platform-Android%20aarch64-orange.svg)](#syarat--requirements)
 
 Module Magisk / KernelSU / APatch untuk menjalankan 9Router di HP Android
@@ -48,7 +48,7 @@ Yang didapat setelah instal:
 
 ### Instalasi
 
-1. Unduh `9RouterAndroid-v1.0.0.zip` dari halaman
+1. Unduh `9RouterAndroid-v1.0.1.zip` dari halaman
    [Releases](https://github.com/OmmniDevv/9RouterAndroid/releases).
 2. Flash zip itu di Magisk, KernelSU, atau APatch Manager, dalam keadaan
    internet menyala.
@@ -223,6 +223,14 @@ root setelah module dihapus.
 
 ### Changelog
 
+#### v1.0.1 (2026-10-28)
+
+- Perbaikan penting: ID module diubah dari `9routerandroid` menjadi
+  `routerandroid`, karena KernelSU menolak ID yang diawali angka
+  dengan pesan Invalid module ID. Nama repo dan nama module tetap
+  9RouterAndroid, hanya ID internal yang berubah.
+- Tidak ada perubahan fitur lain dari v1.0.0.
+
 #### v1.0.0 (2026-10-28)
 
 - Rilis pertama 9RouterAndroid oleh OmmniDevv.
@@ -268,7 +276,7 @@ After installation you get:
 
 ### Installation
 
-1. Download `9RouterAndroid-v1.0.0.zip` from
+1. Download `9RouterAndroid-v1.0.1.zip` from
    [Releases](https://github.com/OmmniDevv/9RouterAndroid/releases).
 2. Flash that zip in Magisk, KernelSU, or APatch Manager while online.
 3. Wait for the flash log to finish. The module runs a one-time
@@ -443,6 +451,14 @@ removing the module.
   Linux binary on Android.
 
 ### Changelog
+
+#### v1.0.1 (2026-10-28)
+
+- Perbaikan penting: ID module diubah dari `9routerandroid` menjadi
+  `routerandroid`, karena KernelSU menolak ID yang diawali angka
+  dengan pesan Invalid module ID. Nama repo dan nama module tetap
+  9RouterAndroid, hanya ID internal yang berubah.
+- Tidak ada perubahan fitur lain dari v1.0.0.
 
 #### v1.0.0 (2026-10-28)
 

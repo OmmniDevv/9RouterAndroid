@@ -437,7 +437,7 @@ case "${1:-status}" in
   models)        shift; do_models "$@" ;;
   selftest)      shift; do_selftest "$@" ;;
   doctor)        do_doctor ;;
-  version)       echo "9router $(installed_version)  (module $(grep '^version=' "$H/../modules/scripts/module.prop" 2>/dev/null | cut -d= -f2))" ;;
+  version)       echo "9router $(installed_version)  (module $(grep '^version=' "$H/../modules/routerandroid/module.prop" 2>/dev/null | cut -d= -f2))" ;;
   -h|--help|help) usage ;;
   *)             usage; exit 2 ;;
 esac

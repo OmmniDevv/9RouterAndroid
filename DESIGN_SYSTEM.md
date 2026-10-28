@@ -23,8 +23,8 @@ milik module: log flash, pesan Action, dan README.
   nodejs.org, dan halaman rilis module ini.
 
 ## Penamaan
-- ID module: `9routerandroid` (huruf kecil, tanpa tanda hubung, sesuai
-  aturan module.prop).
+- ID module: `routerandroid` (huruf kecil, diawali huruf, tanpa tanda
+  hubung, sesuai aturan module.prop KernelSU dan Magisk).
 - Nama repo GitHub: `9RouterAndroid`.
 - Nama file zip rilis: `9RouterAndroid-v<version>.zip`, contoh
-  `9RouterAndroid-v1.0.0.zip`.
+  `9RouterAndroid-v1.0.1.zip`.

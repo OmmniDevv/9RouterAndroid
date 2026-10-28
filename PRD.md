@@ -59,7 +59,7 @@ yang ditegakkan di setiap rilis.
   uninstall.sh, META-INF, system/bin/9router, scripts/, glibc.tar.gz.
 - glibc.tar.gz berisi loader dan pustaka aarch64 lengkap, termasuk
   NSS dan libresolv, bukan hanya set minimal.
-- module.prop: id 9routerandroid, version 1.0.0, versionCode 100,
+- module.prop: id routerandroid, version 1.0.0, versionCode 100,
   author OmmniDevv, updateJson mengarah ke raw GitHub main.
 - Repo GitHub OmmniDevv/9RouterAndroid berisi README dua bahasa,
   banner, LICENSE MIT, update.json, dan dokumen proyek ini.
