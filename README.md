@@ -3,7 +3,7 @@
 # 9RouterAndroid
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Version: 1.0.0](https://img.shields.io/badge/Version-1.0.2-blue.svg)](https://github.com/OmmniDevv/9RouterAndroid/releases/tag/v1.0.2)
+[![Version: 1.0.0](https://img.shields.io/badge/Version-1.0.3-blue.svg)](https://github.com/OmmniDevv/9RouterAndroid/releases/tag/v1.0.3)
 [![Platform: Android aarch64](https://img.shields.io/badge/Platform-Android%20aarch64-orange.svg)](#syarat--requirements)
 
 Module Magisk / KernelSU / APatch untuk menjalankan 9Router di HP Android
@@ -48,7 +48,7 @@ Yang didapat setelah instal:
 
 ### Instalasi
 
-1. Unduh `9RouterAndroid-v1.0.2.zip` dari halaman
+1. Unduh `9RouterAndroid-v1.0.3.zip` dari halaman
    [Releases](https://github.com/OmmniDevv/9RouterAndroid/releases).
 2. Flash zip itu di Magisk, KernelSU, atau APatch Manager, dalam keadaan
    internet menyala.
@@ -223,6 +223,36 @@ root setelah module dihapus.
 
 ### Changelog
 
+#### v1.0.3 (2026-10-28)
+
+- WebUI hybrid: halaman yang sama bisa dibuka dari tombol WebUI di
+  KernelSU (webroot/index.html) dan dari browser
+  (http://127.0.0.1:20129/). Server WebUI jalan otomatis saat flash
+  dan saat boot, jadi tidak perlu dinyalakan manual.
+- Di WebUI bisa ganti/tambah provider untuk Hermes (pilih model dari
+  daftar /v1/models, API key opsional, simpan langsung ke config
+  Hermes) dan ubah pengaturan module (port, host, autostart, DoH,
+  max_old_space). Kalau pengaturan yang butuh restart diubah,
+  9router di-restart otomatis dari WebUI, tidak perlu restart manual.
+- Dashboard bawaan 9router tetap ada terpisah di
+  http://127.0.0.1:20128/dashboard, login tetap pakai password awal
+  9router. WebUI module ini loopback saja, tidak dibuka ke LAN.
+
+#### v1.0.3 (2026-10-28)
+
+- Hybrid WebUI: the same page opens from the KernelSU WebUI button
+  (webroot/index.html) and from a browser
+  (http://127.0.0.1:20129/). The WebUI server starts automatically
+  at flash and at boot, so no manual start is needed.
+- From the WebUI you can change/add a provider for Hermes (pick a
+  model from /v1/models, optional API key, saved straight to the
+  Hermes config) and change module settings (port, host, autostart,
+  DoH, max_old_space). Settings that need a restart restart 9router
+  automatically from the WebUI, no manual restart needed.
+- The built-in 9router dashboard stays separate at
+  http://127.0.0.1:20128/dashboard, login still uses the 9router
+  initial password. This module WebUI is loopback only.
+
 #### v1.0.2 (2026-10-28)
 
 - Exec via KernelSU seperti HermesAndroid: `su -c 9router` dan
@@ -304,7 +334,7 @@ After installation you get:
 
 ### Installation
 
-1. Download `9RouterAndroid-v1.0.2.zip` from
+1. Download `9RouterAndroid-v1.0.3.zip` from
    [Releases](https://github.com/OmmniDevv/9RouterAndroid/releases).
 2. Flash that zip in Magisk, KernelSU, or APatch Manager while online.
 3. Wait for the flash log to finish. The module runs a one-time

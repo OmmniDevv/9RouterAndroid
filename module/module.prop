@@ -1,7 +1,7 @@
 id=routerandroid
 name=9RouterAndroid
-version=1.0.2
-versionCode=102
+version=1.0.3
+versionCode=103
 author=OmmniDevv
 description=9Router LLM gateway for rooted Android via Magisk/KernelSU/APatch. Standalone runtime with bundled glibc and Node.js 22 LTS, by OmmniDevv.
 updateJson=https://raw.githubusercontent.com/OmmniDevv/9RouterAndroid/main/update.json

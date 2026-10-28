@@ -37,5 +37,9 @@ if [ "$AUTOSTART" = "false" ]; then
   exit 0
 fi
 
+if [ "$(grep -E '^webui_autostart=' "$H/settings.ini" 2>/dev/null | tail -n 1 | cut -d= -f2 | tr -d '\r')" != "false" ]; then
+  "$H/bin/9router" webui start >> "$LOG" 2>&1 || true
+fi
+
 "$H/bin/9router" start --nowait >> "$LOG" 2>&1
 exit 0

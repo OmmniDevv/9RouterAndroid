@@ -79,11 +79,14 @@ log "glibc extracted"
 ui_print "- glibc runtime ready"
 
 # ── helper files + node wrapper (needed before the first node run) ──
-for f in node-compat.cjs nr-tool.cjs; do
+for f in node-compat.cjs nr-tool.cjs webui.cjs; do
   [ -f "$MODPATH/scripts/$f" ] || die "Missing scripts/$f in module"
   cp "$MODPATH/scripts/$f" "$H/$f" || die "Cannot copy $f"
   chmod 644 "$H/$f"
 done
+mkdir -p "$H/webui"
+[ -f "$MODPATH/webui/index.html" ] && cp "$MODPATH/webui/index.html" "$H/webui/index.html"
+[ -f "$MODPATH/webroot/index.html" ] && cp "$MODPATH/webroot/index.html" "$H/webui/index.html" 2>/dev/null || true
 rm -f "$NODE"
 cp "$MODPATH/scripts/node-wrapper.sh" "$NODE" || die "Cannot install node wrapper"
 chmod 755 "$NODE"
@@ -184,6 +187,8 @@ initial_password=$PW
 # DNS-over-HTTPS resolver for Node (auto|off)
 doh=auto
 hermes_dir=$HERMES_DIR
+webui_port=20129
+webui_autostart=true
 INIEOF
 fi
 chmod 600 "$H/settings.ini"
@@ -218,6 +223,7 @@ for d in /data/adb/ksu/bin /data/adb/ap/bin; do
   [ -f "$MODPATH/system/bin/9router.service" ] && [ -d "$d" ] && cp "$MODPATH/system/bin/9router.service" "$d/9router.service" && chmod 755 "$d/9router.service"
 done
 
+"$H/bin/9router" webui start >> "$LOG" 2>&1 || log "WARNING: WebUI server failed to start at flash (will retry on boot)"
 echo "done" > "$H/.install_state"
 chmod 600 "$H/.install_state"
 log "===== Install complete ====="

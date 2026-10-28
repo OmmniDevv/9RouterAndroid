@@ -2,7 +2,7 @@
 # ============================================================
 # 9RouterAndroid — control script  (installed as bin/9router)
 #
-#   9router start|stop|restart|status|log [-f]|url|password|webui
+#   9router start|stop|restart|status|log [-f]|url|password|webui [start|stop|restart|status]
 #   9router config [set KEY VALUE]
 #   9router update [--check] [--version X] [--force]
 #   9router rollback
@@ -181,25 +181,63 @@ do_password() {
 }
 
 do_webui() {
-  # WebUI = dashboard bawaan 9router sendiri, bukan server baru.
-  # Login tetap pakai password awal 9router (lihat: 9router password).
-  # Kalau server belum jalan, nyalakan dulu supaya dashboard bisa dibuka,
-  # jadi tidak perlu nyala-ulang manual yang ribet.
-  pid=$(server_pid)
-  [ -n "$pid" ] || do_start || return 1
-  port=$(cfg port 20128)
-  echo "WebUI (dashboard 9router): http://127.0.0.1:$port/dashboard"
-  echo "API base                  : http://127.0.0.1:$port/v1"
-  echo "Login                     : pakai password awal 9router (su -c '9router password')"
-  echo "                          (kalau sudah diubah di dashboard, pakai password baru itu)"
-  am start -a android.intent.action.VIEW -d "http://127.0.0.1:$port/dashboard" >/dev/null 2>&1 || true
+  # Hybrid WebUI: halaman yang sama bisa dibuka dari tombol WebUI KernelSU
+  # (webroot/index.html) dan dari browser (server loopback di webui_port).
+  # Server WebUI jalan otomatis saat flash dan boot; perintah ini hanya
+  # memastikan servernya jalan, lalu menampilkan kedua cara bukanya.
+  # Dashboard bawaan 9router tetap ada terpisah, login pakai password awal.
+  case "${1:-}" in
+    start|restart)
+      do_webui_stop 2>/dev/null
+      wport=$(cfg webui_port 20129)
+      mkdir -p "$H/webui"
+      (
+        export ROUTERANDROID_HOME="$H" WEBUI_PORT="$wport"
+        export HOME="$H/home" TMPDIR="$H/tmp" DATA_DIR="$H/data"
+        [ -s "$H/ca-bundle.pem" ] && export NODE_EXTRA_CA_CERTS="$H/ca-bundle.pem"
+        export NODE_OPTIONS="--require=$H/node-compat.cjs ${NODE_OPTIONS:-}"
+        exec setsid nohup "$NODE" "$H/webui.cjs" >> "$H/webui.log" 2>&1 < /dev/null
+      ) &
+      echo $! > "$H/webui.pid"
+      sleep 1
+      if http_ok "http://127.0.0.1:$wport/api/status"; then echo "WebUI jalan: http://127.0.0.1:$wport/"; else echo "WebUI gagal start — lihat $H/webui.log"; return 1; fi
+      ;;
+    stop) do_webui_stop ;;
+    status)
+      wport=$(cfg webui_port 20129)
+      if [ -f "$H/webui.pid" ] && kill -0 "$(cat "$H/webui.pid" 2>/dev/null)" 2>/dev/null; then echo "WebUI: running (PID $(cat "$H/webui.pid"))"; else echo "WebUI: stopped"; fi
+      echo "URL browser: http://127.0.0.1:$wport/"
+      echo "KernelSU   : tombol WebUI di modul 9RouterAndroid"
+      ;;
+    *)
+      # default: pastikan server jalan, lalu tampilkan semua URL
+      wport=$(cfg webui_port 20129)
+      if ! http_ok "http://127.0.0.1:$wport/api/status"; then
+        do_webui start || true
+      fi
+      port=$(cfg port 20128)
+      echo "WebUI module (hybrid):"
+      echo "  KernelSU : tombol WebUI di modul 9RouterAndroid"
+      echo "  Browser  : http://127.0.0.1:$wport/"
+      echo "Dashboard bawaan 9router: http://127.0.0.1:$port/dashboard"
+      echo "  Login dashboard: pakai password awal 9router (su -c '9router password')"
+      am start -a android.intent.action.VIEW -d "http://127.0.0.1:$wport/" >/dev/null 2>&1 || true
+      ;;
+  esac
+}
+
+do_webui_stop() {
+  [ -f "$H/webui.pid" ] && kill "$(cat "$H/webui.pid" 2>/dev/null)" 2>/dev/null
+  pkill -f "webui.cjs" 2>/dev/null || true
+  rm -f "$H/webui.pid"
+  echo "WebUI stopped"
 }
 
 do_config() {
   if [ "${1:-}" = "set" ]; then
     k="$2"; v="$3"
     case "$k" in
-      port|host|autostart|max_old_space|doh|initial_password|hermes_dir) ;;
+      port|host|autostart|max_old_space|doh|initial_password|hermes_dir|webui_port|webui_autostart) ;;
       *) echo "unknown key '$k' (port host autostart max_old_space doh initial_password hermes_dir)"; return 2 ;;
     esac
     [ -n "$v" ] || { echo "usage: 9router config set KEY VALUE"; return 2; }
@@ -428,7 +466,7 @@ usage() {
   9router log [-f|N]        show / follow the log
   9router url               dashboard + API endpoints
   9router password          show the initial dashboard password
-  9router config [set K V]  keys: port host autostart max_old_space doh initial_password hermes_dir
+  9router config [set K V]  keys: port host autostart max_old_space doh initial_password hermes_dir webui_port webui_autostart
   9router update [--check] [--version X] [--force]
   9router rollback
   9router link-hermes [--key sk-...] [--model ID]

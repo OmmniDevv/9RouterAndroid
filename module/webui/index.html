@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>9RouterAndroid WebUI</title>
+<style>
+body{font-family:system-ui,sans-serif;background:#0b1020;color:#e8ecf8;margin:0;padding:16px}
+h1{font-size:20px;margin:0 0 4px} h3{margin:0 0 8px} p{color:#9aa7c7}
+button{background:#7c5cff;color:#fff;border:0;padding:10px 14px;border-radius:10px;margin:4px 4px 4px 0;font-size:15px}
+button.secondary{background:#22304d} a{color:#8fd0ff}
+pre{background:#111a33;border:1px solid #22304d;border-radius:10px;padding:12px;white-space:pre-wrap;word-break:break-word;max-height:320px;overflow:auto}
+label{display:block;margin:8px 0} input,select{background:#111a33;color:#fff;border:1px solid #22304d;border-radius:8px;padding:8px;width:100%;box-sizing:border-box}
+.card{background:#131c36;border:1px solid #22304d;border-radius:14px;padding:14px;margin:12px 0}
+small{color:#9aa7c7}
+</style>
+</head>
+<body>
+<h1>9RouterAndroid WebUI</h1>
+<p>Halaman yang sama, dua cara buka: tombol WebUI di KernelSU, atau browser ke <code>http://127.0.0.1:20129/</code>. Server WebUI jalan otomatis saat boot dan saat flash, tidak perlu dinyalakan manual.</p>
+<div class="card">
+<button onclick="call('/api/start')">Start</button>
+<button onclick="call('/api/stop')" class="secondary">Stop</button>
+<button onclick="call('/api/restart')">Restart</button>
+<button onclick="refresh()">Refresh Status</button>
+<button onclick="call('/api/password')" class="secondary">Password Dashboard</button>
+<button onclick="call('/api/doctor')" class="secondary">Doctor</button>
+</div>
+<div class="card"><h3>Status</h3><pre id="status">Memuat...</pre><p id="links"></p></div>
+<div class="card"><h3>Provider — ganti / tambah untuk Hermes</h3>
+<p><small>Pilih model dari 9Router, lalu simpan ke Hermes. API key opsional: kosongkan kalau mau dibuatkan otomatis lewat dashboard 9Router.</small></p>
+<button onclick="loadModels()" class="secondary">Muat Daftar Model</button>
+<label>Model <select id="model"></select></label>
+<label>Atau ketik model manual <input id="modelManual" placeholder="contoh: openai/gpt-5 atau anthropic/claude-sonnet-4-5"></label>
+<label>API key (opsional, tidak ditampilkan kembali) <input id="apiKey" type="password" placeholder="sk-... (kosongkan = otomatis)"></label>
+<button onclick="saveProvider()">Simpan Provider ke Hermes</button>
+<pre id="hermes"></pre>
+</div>
+<div class="card"><h3>Pengaturan</h3>
+<label>Port 9Router <input id="port"></label>
+<label>Host <input id="host" placeholder="127.0.0.1"></label>
+<label>Autostart <select id="autostart"><option value="true">true</option><option value="false">false</option></select></label>
+<label>DoH <select id="doh"><option value="auto">auto</option><option value="off">off</option></select></label>
+<label>Max old space (MB) <input id="max_old_space"></label>
+<label>WebUI autostart <select id="webui_autostart"><option value="true">true</option><option value="false">false</option></select></label>
+<button onclick="saveSettings()">Simpan Pengaturan</button>
+<p><small>Kalau port/host/DoH berubah, 9Router di-restart otomatis dari WebUI ini. Tidak perlu restart manual.</small></p>
+</div>
+<div class="card"><h3>Log</h3><button onclick="loadLog()" class="secondary">Muat Ulang Log</button><pre id="log"></pre></div>
+<div class="card"><h3>Hasil</h3><pre id="out"></pre></div>
+<script>
+const API = (window.location.protocol === 'file:' || window.location.hostname === '') ? 'http://127.0.0.1:20129' : '';
+async function j(path, opts){
+  const r = await fetch(API + path, opts);
+  return r.json();
+}
+async function refresh(){
+  try {
+    const d = await j('/api/status');
+    document.getElementById('status').textContent = (d.status||'') + '\nhealth: ' + (d.health ? 'ok' : 'not responding');
+    document.getElementById('links').innerHTML = 'Dashboard bawaan: <a href="' + d.dashboard + '" target="_blank">' + d.dashboard + '</a> (login pakai password awal 9Router)<br>API: ' + d.api;
+    document.getElementById('hermes').textContent = d.hermes && d.hermes.found ? ('Hermes sekarang: provider=' + d.hermes.provider + ' model=' + d.hermes.model + ' base=' + d.hermes.base_url) : 'Hermes tidak ditemukan di HP ini.';
+    if(d.settings){ for(const k of Object.keys(d.settings)){ const el=document.getElementById(k); if(el) el.value=d.settings[k]; } }
+  } catch(e){ document.getElementById('status').textContent = 'WebUI server belum jalan. Jalankan di terminal root: su -c \'9router webui\' lalu muat ulang halaman ini. (' + e + ')'; }
+}
+async function call(path){
+  document.getElementById('out').textContent = 'Menjalankan...';
+  const d = await j(path,{method:'POST'}); document.getElementById('out').textContent = d.output || JSON.stringify(d); refresh(); loadLog();
+}
+async function loadLog(){ try{ const d = await j('/api/log'); document.getElementById('log').textContent = d.log || ''; }catch(e){} }
+async function loadModels(){
+  document.getElementById('out').textContent = 'Memuat model...';
+  const d = await j('/api/models'); document.getElementById('out').textContent = d.output || '';
+  const sel = document.getElementById('model'); sel.innerHTML = '';
+  (d.models||[]).forEach(m => { const o=document.createElement('option'); o.value=m; o.textContent=m; sel.appendChild(o); });
+}
+async function saveProvider(){
+  const model = document.getElementById('modelManual').value.trim() || document.getElementById('model').value;
+  const key = document.getElementById('apiKey').value.trim();
+  if(!model){ document.getElementById('out').textContent = 'Pilih atau ketik model dulu.'; return; }
+  document.getElementById('out').textContent = 'Menyimpan provider ke Hermes...';
+  const d = await j('/api/link-hermes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model, key})});
+  document.getElementById('out').textContent = d.output || JSON.stringify(d); document.getElementById('apiKey').value=''; refresh();
+}
+async function saveSettings(){
+  const data={};
+  for(const k of ['port','host','autostart','doh','max_old_space','webui_autostart']){ const el=document.getElementById(k); if(el && el.value) data[k]=el.value; }
+  const d = await j('/api/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+  document.getElementById('out').textContent = d.output || JSON.stringify(d); refresh();
+}
+refresh(); loadLog();
+</script>
+</body>
+</html>
