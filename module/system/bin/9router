@@ -1,0 +1,3 @@
+#!/system/bin/sh
+# 9router wrapper — installed to /system/bin via the module overlay
+exec /data/adb/9router/bin/9router "$@"
