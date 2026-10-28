@@ -3,7 +3,7 @@
 # 9RouterAndroid
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Version: 1.0.0](https://img.shields.io/badge/Version-1.0.5-blue.svg)](https://github.com/OmmniDevv/9RouterAndroid/releases/tag/v1.0.5)
+[![Version: 1.0.0](https://img.shields.io/badge/Version-1.0.6-blue.svg)](https://github.com/OmmniDevv/9RouterAndroid/releases/tag/v1.0.6)
 [![Platform: Android aarch64](https://img.shields.io/badge/Platform-Android%20aarch64-orange.svg)](#syarat--requirements)
 
 Module Magisk / KernelSU / APatch untuk menjalankan 9Router di HP Android
@@ -48,7 +48,7 @@ Yang didapat setelah instal:
 
 ### Instalasi
 
-1. Unduh `9RouterAndroid-v1.0.5.zip` dari halaman
+1. Unduh `9RouterAndroid-v1.0.6.zip` dari halaman
    [Releases](https://github.com/OmmniDevv/9RouterAndroid/releases).
 2. Flash zip itu di Magisk, KernelSU, atau APatch Manager, dalam keadaan
    internet menyala.
@@ -223,6 +223,40 @@ root setelah module dihapus.
 
 ### Changelog
 
+#### v1.0.6 (2026-10-28)
+
+- WebUI diringkas jadi cuma buat jalanin perintah 9router versi
+  terminal, sesuai permintaan user. Tidak ada lagi kartu Provider
+  dan Pengaturan terpisah: halaman cuma berisi tombol perintah
+  cepat (status, start, stop, restart, log, url, password, version,
+  doctor, models), kolom ketik perintah, dan kotak output bergaya
+  terminal.
+- Endpoint /api/run diperluas jadi semua subcommand terminal
+  9router (status, start, stop, restart, log, url, password,
+  version, doctor, selftest, models, config, link-hermes, update,
+  rollback), kecuali webui sendiri dan log -f. Karakter shell
+  ditolak, update dan rollback minta konfirmasi dulu di halaman,
+  dan API key yang diketik tidak pernah dikembalikan di output.
+  Provider dan pengaturan tetap bisa diatur lewat perintah yang
+  sama seperti di terminal, contoh: config set port 20128 dan
+  link-hermes --model openai/gpt-5.
+
+#### v1.0.6 (2026-10-28)
+
+- WebUI simplified to only run 9router terminal commands, as
+  requested. No separate Provider and Settings cards anymore: the
+  page only has quick command buttons (status, start, stop,
+  restart, log, url, password, version, doctor, models), a command
+  input, and a terminal-style output box.
+- The /api/run endpoint now accepts every 9router terminal
+  subcommand (status, start, stop, restart, log, url, password,
+  version, doctor, selftest, models, config, link-hermes, update,
+  rollback), except webui itself and log -f. Shell characters are
+  rejected, update and rollback ask for confirmation first, and a
+  typed API key is never returned in output. Provider and settings
+  are still managed with the same terminal commands, for example:
+  config set port 20128 and link-hermes --model openai/gpt-5.
+
 #### v1.0.5 (2026-10-28)
 
 - Perbaikan WebUI KernelSU yang tidak fungsi: halaman WebUI yang
@@ -395,7 +429,7 @@ After installation you get:
 
 ### Installation
 
-1. Download `9RouterAndroid-v1.0.5.zip` from
+1. Download `9RouterAndroid-v1.0.6.zip` from
    [Releases](https://github.com/OmmniDevv/9RouterAndroid/releases).
 2. Flash that zip in Magisk, KernelSU, or APatch Manager while online.
 3. Wait for the flash log to finish. The module runs a one-time

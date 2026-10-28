@@ -156,6 +156,31 @@ const server = http.createServer(async (req, res) => {
       // Never echo the key back.
       return send(res, 200, { ok: r.ok, output: key ? r.output.replace(key, '[key disembunyikan]') : r.output });
     }
+    if (req.method === 'POST' && url.pathname === '/api/run') {
+      // WebUI ini cuma buat jalanin perintah 9router versi terminal.
+      // Jadi allow-list-nya = semua subcommand terminal 9router, kecuali
+      // 'webui' sendiri (rekursif) dan 'log -f' (tidak pernah selesai).
+      // Karakter shell ditolak, jadi tidak ada injeksi perintah di luar
+      // control script. Server ini loopback saja, jadi yang bisa
+      // memanggilnya hanyalah pemilik HP ini.
+      const data = JSON.parse(await readBody(req) || '{}');
+      const raw = String(data.cmd || '').trim();
+      if (!raw) return send(res, 400, { ok: false, output: 'perintah kosong' });
+      if (/[;|&$`<>\\\n\r]/.test(raw)) return send(res, 400, { ok: false, output: 'karakter shell tidak diizinkan' });
+      const parts = raw.split(/\s+/).filter(Boolean);
+      const cmd = parts[0];
+      const allowed = ['status', 'start', 'stop', 'restart', 'log', 'url', 'password', 'version', 'doctor', 'selftest', 'models', 'config', 'link-hermes', 'update', 'rollback'];
+      if (!allowed.includes(cmd)) return send(res, 400, { ok: false, output: 'perintah tidak dikenal: ' + cmd });
+      if (cmd === 'log' && parts[1] === '-f') return send(res, 400, { ok: false, output: 'log -f tidak didukung di WebUI (tidak pernah selesai), pakai: log 100' });
+      if (parts.some((a) => !/^[A-Za-z0-9_\-./:=@+]+$/.test(a))) return send(res, 400, { ok: false, output: 'argumen mengandung karakter tidak diizinkan' });
+      const timeout = cmd === 'update' ? 600000 : cmd === 'selftest' || cmd === 'doctor' ? 180000 : cmd === 'start' || cmd === 'restart' ? 90000 : 60000;
+      const r = await runCtl(parts, timeout);
+      // Jangan pernah mengembalikan API key yang diketik user.
+      let out = r.output;
+      const keyIdx = parts.indexOf('--key');
+      if (keyIdx >= 0 && parts[keyIdx + 1]) out = out.split(parts[keyIdx + 1]).join('[key disembunyikan]');
+      return send(res, 200, { ok: r.ok, output: out });
+    }
     if (req.method === 'GET' && url.pathname === '/api/settings') {
       return send(res, 200, { ok: true, settings: settings() });
     }
