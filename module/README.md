@@ -3,7 +3,7 @@
 # 9RouterAndroid
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Version: 1.0.0](https://img.shields.io/badge/Version-1.0.3-blue.svg)](https://github.com/OmmniDevv/9RouterAndroid/releases/tag/v1.0.3)
+[![Version: 1.0.0](https://img.shields.io/badge/Version-1.0.4-blue.svg)](https://github.com/OmmniDevv/9RouterAndroid/releases/tag/v1.0.4)
 [![Platform: Android aarch64](https://img.shields.io/badge/Platform-Android%20aarch64-orange.svg)](#syarat--requirements)
 
 Module Magisk / KernelSU / APatch untuk menjalankan 9Router di HP Android
@@ -48,7 +48,7 @@ Yang didapat setelah instal:
 
 ### Instalasi
 
-1. Unduh `9RouterAndroid-v1.0.3.zip` dari halaman
+1. Unduh `9RouterAndroid-v1.0.4.zip` dari halaman
    [Releases](https://github.com/OmmniDevv/9RouterAndroid/releases).
 2. Flash zip itu di Magisk, KernelSU, atau APatch Manager, dalam keadaan
    internet menyala.
@@ -223,6 +223,33 @@ root setelah module dihapus.
 
 ### Changelog
 
+#### v1.0.4 (2026-10-28)
+
+- Perbaikan tombol Action/WebUI KernelSU yang tidak muncul:
+  webroot/index.html sebelumnya terbawa di zip dengan izin 660
+  (tidak bisa dibaca aplikasi KernelSU sebagai user non-root),
+  sekarang dipaksa 644 saat flash, action.sh dipaksa 755, dan
+  folder webroot dipaksa 755.
+- Catatan penting yang tidak bisa diperbaiki dari dalam zip:
+  tombol Action/WebUI KernelSU hanya muncul kalau modulnya AKTIF
+  (toggle menyala) dan sesudah reboot. Kalau toggle masih mati di
+  daftar modul, nyalakan dulu lalu reboot, baru tombolnya muncul.
+  WebUI juga bisa dibuka dari halaman detail modul (ketuk kartunya),
+  bukan cuma dari daftar.
+
+#### v1.0.4 (2026-10-28)
+
+- Fix for the missing KernelSU Action/WebUI buttons:
+  webroot/index.html used to ship in the zip as 660 (not readable
+  by the KernelSU manager app as a non-root user); it is now forced
+  to 644 at flash, action.sh to 755, and the webroot folder to 755.
+- Important note that cannot be fixed from inside the zip:
+  KernelSU only shows the Action/WebUI buttons when the module is
+  ENABLED (toggle on) and after a reboot. If the toggle is still off
+  in the module list, turn it on and reboot first. The WebUI button
+  also lives on the module detail page (tap the card), not only in
+  the list.
+
 #### v1.0.3 (2026-10-28)
 
 - WebUI hybrid: halaman yang sama bisa dibuka dari tombol WebUI di
@@ -334,7 +361,7 @@ After installation you get:
 
 ### Installation
 
-1. Download `9RouterAndroid-v1.0.3.zip` from
+1. Download `9RouterAndroid-v1.0.4.zip` from
    [Releases](https://github.com/OmmniDevv/9RouterAndroid/releases).
 2. Flash that zip in Magisk, KernelSU, or APatch Manager while online.
 3. Wait for the flash log to finish. The module runs a one-time

@@ -213,6 +213,14 @@ rm -rf "$H/tmp"; mkdir -p "$H/tmp"
 
 set_perm "$MODPATH/system/bin/9router" root root 0755
 set_perm "$MODPATH/system/bin/9router.service" root root 0755
+# KernelSU Action/WebUI buttons: action.sh must be executable and webroot
+# must be world-readable (the manager app reads it as a non-root user).
+# The zip previously shipped webroot/index.html as 660, which can hide
+# the WebUI button even though the file is there.
+chmod 755 "$MODPATH/action.sh" 2>/dev/null || true
+chmod 755 "$MODPATH/webroot" 2>/dev/null || true
+chmod 644 "$MODPATH/webroot/index.html" 2>/dev/null || true
+chmod 644 "$MODPATH/webui/index.html" 2>/dev/null || true
 
 # KernelSU exec, langsung tanpa reboot (sebelumnya link baru dibuat service.sh
 # saat boot, jadi su -c 9router gagal kalau belum reboot, dan overlay
