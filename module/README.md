@@ -3,7 +3,7 @@
 # 9RouterAndroid
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Version: 1.0.0](https://img.shields.io/badge/Version-1.0.4-blue.svg)](https://github.com/OmmniDevv/9RouterAndroid/releases/tag/v1.0.4)
+[![Version: 1.0.0](https://img.shields.io/badge/Version-1.0.5-blue.svg)](https://github.com/OmmniDevv/9RouterAndroid/releases/tag/v1.0.5)
 [![Platform: Android aarch64](https://img.shields.io/badge/Platform-Android%20aarch64-orange.svg)](#syarat--requirements)
 
 Module Magisk / KernelSU / APatch untuk menjalankan 9Router di HP Android
@@ -48,7 +48,7 @@ Yang didapat setelah instal:
 
 ### Instalasi
 
-1. Unduh `9RouterAndroid-v1.0.4.zip` dari halaman
+1. Unduh `9RouterAndroid-v1.0.5.zip` dari halaman
    [Releases](https://github.com/OmmniDevv/9RouterAndroid/releases).
 2. Flash zip itu di Magisk, KernelSU, atau APatch Manager, dalam keadaan
    internet menyala.
@@ -223,6 +223,40 @@ root setelah module dihapus.
 
 ### Changelog
 
+#### v1.0.5 (2026-10-28)
+
+- Perbaikan WebUI KernelSU yang tidak fungsi: halaman WebUI yang
+  dibuka dari KernelSU diserve dari origin KernelSU sendiri, bukan
+  dari server WebUI di port 20129, tapi JavaScript lama memakai
+  path API relatif, jadi fetch('/api/status') malah kena server
+  webroot KernelSU dan balasannya bukan JSON (pesan error
+  "Unexpected end of JSON input" padahal server WebUI sudah jalan).
+  Sekarang API base dihitung dari port halaman: kalau port-nya
+  20129 pakai relatif, kalau bukan pakai http://127.0.0.1:20129.
+  Diuji dengan halaman diserve dari port lain dan CORS server
+  WebUI lolos.
+- Desain WebUI dirapikan (header gradasi, badge jalan/berhenti,
+  kartu lebih lega) dan semua aksi diberi penanganan error + timeout,
+  jadi tidak lagi stuck di "Menjalankan..." kalau server tidak
+  terjangkau. Pengaturan yang tadinya kosong karena status gagal
+  dimuat sekarang terisi setelah status berhasil.
+
+#### v1.0.5 (2026-10-28)
+
+- Fix for the non-working KernelSU WebUI: the page opened from
+  KernelSU is served from KernelSU's own origin, not from the WebUI
+  server on port 20129, but the old JavaScript used relative API
+  paths, so fetch('/api/status') hit KernelSU's webroot server
+  instead and returned non-JSON ("Unexpected end of JSON input"
+  even though the WebUI server was already running). The API base
+  is now derived from the page port: relative on port 20129,
+  otherwise http://127.0.0.1:20129. Tested with the page served
+  from another port, CORS passes.
+- WebUI design cleaned up (gradient header, running/stopped badge,
+  roomier cards) and every action now has error handling + timeout,
+  so it no longer gets stuck on "Menjalankan..." when the server is
+  unreachable.
+
 #### v1.0.4 (2026-10-28)
 
 - Perbaikan tombol Action/WebUI KernelSU yang tidak muncul:
@@ -361,7 +395,7 @@ After installation you get:
 
 ### Installation
 
-1. Download `9RouterAndroid-v1.0.4.zip` from
+1. Download `9RouterAndroid-v1.0.5.zip` from
    [Releases](https://github.com/OmmniDevv/9RouterAndroid/releases).
 2. Flash that zip in Magisk, KernelSU, or APatch Manager while online.
 3. Wait for the flash log to finish. The module runs a one-time

@@ -5,88 +5,138 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>9RouterAndroid WebUI</title>
 <style>
-body{font-family:system-ui,sans-serif;background:#0b1020;color:#e8ecf8;margin:0;padding:16px}
-h1{font-size:20px;margin:0 0 4px} h3{margin:0 0 8px} p{color:#9aa7c7}
-button{background:#7c5cff;color:#fff;border:0;padding:10px 14px;border-radius:10px;margin:4px 4px 4px 0;font-size:15px}
-button.secondary{background:#22304d} a{color:#8fd0ff}
-pre{background:#111a33;border:1px solid #22304d;border-radius:10px;padding:12px;white-space:pre-wrap;word-break:break-word;max-height:320px;overflow:auto}
-label{display:block;margin:8px 0} input,select{background:#111a33;color:#fff;border:1px solid #22304d;border-radius:8px;padding:8px;width:100%;box-sizing:border-box}
-.card{background:#131c36;border:1px solid #22304d;border-radius:14px;padding:14px;margin:12px 0}
-small{color:#9aa7c7}
+:root{--bg:#0a0f1e;--card:#141d33;--line:#24365e;--text:#eef2ff;--muted:#93a4c8;--violet:#8b5cf6;--green:#22c55e;--red:#ef4444}
+*{box-sizing:border-box}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text);margin:0;padding:0 0 32px}
+header{position:sticky;top:0;background:linear-gradient(135deg,#7c3aed,#2563eb);padding:18px 16px;box-shadow:0 4px 24px rgba(0,0,0,.4)}
+header h1{font-size:21px;margin:0} header p{margin:6px 0 0;color:#dbeafe;font-size:14px}
+main{max-width:720px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:14px 0;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.card h2{font-size:17px;margin:0 0 12px}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+button{background:var(--violet);color:#fff;border:0;padding:11px 16px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer}
+button.secondary{background:#22304d} button:active{opacity:.8}
+.pill{display:inline-block;padding:4px 10px;border-radius:999px;font-size:13px;font-weight:700;background:#22304d}
+.pill.ok{background:#14532d;color:#bbf7d0} .pill.bad{background:#7f1d1d;color:#fecaca}
+pre{background:#0b1226;border:1px solid var(--line);border-radius:12px;padding:12px;white-space:pre-wrap;word-break:break-word;max-height:340px;overflow:auto;font-size:13px;line-height:1.5}
+label{display:block;margin:10px 0 4px;color:var(--muted);font-size:14px}
+input,select{background:#0b1226;color:#fff;border:1px solid var(--line);border-radius:10px;padding:11px;width:100%;font-size:15px}
+small{color:var(--muted);line-height:1.5}
+a{color:#93c5fd}
 </style>
 </head>
 <body>
-<h1>9RouterAndroid WebUI</h1>
-<p>Halaman yang sama, dua cara buka: tombol WebUI di KernelSU, atau browser ke <code>http://127.0.0.1:20129/</code>. Server WebUI jalan otomatis saat boot dan saat flash, tidak perlu dinyalakan manual.</p>
+<header>
+<h1>9RouterAndroid</h1>
+<p>WebUI hybrid: tombol WebUI di KernelSU dan browser <code>http://127.0.0.1:20129/</code> memakai halaman dan server yang sama.</p>
+</header>
+<main>
 <div class="card">
+<h2>Kontrol</h2>
+<div class="row">
 <button onclick="call('/api/start')">Start</button>
 <button onclick="call('/api/stop')" class="secondary">Stop</button>
 <button onclick="call('/api/restart')">Restart</button>
-<button onclick="refresh()">Refresh Status</button>
-<button onclick="call('/api/password')" class="secondary">Password Dashboard</button>
+<button onclick="refresh()">Refresh</button>
+<button onclick="call('/api/password')" class="secondary">Password</button>
 <button onclick="call('/api/doctor')" class="secondary">Doctor</button>
 </div>
-<div class="card"><h3>Status</h3><pre id="status">Memuat...</pre><p id="links"></p></div>
-<div class="card"><h3>Provider — ganti / tambah untuk Hermes</h3>
-<p><small>Pilih model dari 9Router, lalu simpan ke Hermes. API key opsional: kosongkan kalau mau dibuatkan otomatis lewat dashboard 9Router.</small></p>
+</div>
+<div class="card">
+<h2>Status <span id="badge" class="pill">memuat...</span></h2>
+<pre id="status">Memuat...</pre>
+<p id="links"></p>
+</div>
+<div class="card">
+<h2>Provider untuk Hermes</h2>
+<p><small>Pilih model dari 9Router, lalu simpan ke Hermes. API key opsional, kosongkan kalau mau dibuatkan otomatis.</small></p>
 <button onclick="loadModels()" class="secondary">Muat Daftar Model</button>
-<label>Model <select id="model"></select></label>
-<label>Atau ketik model manual <input id="modelManual" placeholder="contoh: openai/gpt-5 atau anthropic/claude-sonnet-4-5"></label>
-<label>API key (opsional, tidak ditampilkan kembali) <input id="apiKey" type="password" placeholder="sk-... (kosongkan = otomatis)"></label>
-<button onclick="saveProvider()">Simpan Provider ke Hermes</button>
+<label>Model</label><select id="model"></select>
+<label>Atau ketik model manual</label><input id="modelManual" placeholder="contoh: openai/gpt-5">
+<label>API key (opsional, tidak ditampilkan kembali)</label><input id="apiKey" type="password" placeholder="sk-... (kosongkan = otomatis)">
+<div class="row" style="margin-top:10px"><button onclick="saveProvider()">Simpan Provider ke Hermes</button></div>
 <pre id="hermes"></pre>
 </div>
-<div class="card"><h3>Pengaturan</h3>
-<label>Port 9Router <input id="port"></label>
-<label>Host <input id="host" placeholder="127.0.0.1"></label>
-<label>Autostart <select id="autostart"><option value="true">true</option><option value="false">false</option></select></label>
-<label>DoH <select id="doh"><option value="auto">auto</option><option value="off">off</option></select></label>
-<label>Max old space (MB) <input id="max_old_space"></label>
-<label>WebUI autostart <select id="webui_autostart"><option value="true">true</option><option value="false">false</option></select></label>
-<button onclick="saveSettings()">Simpan Pengaturan</button>
-<p><small>Kalau port/host/DoH berubah, 9Router di-restart otomatis dari WebUI ini. Tidak perlu restart manual.</small></p>
+<div class="card">
+<h2>Pengaturan</h2>
+<label>Port 9Router</label><input id="port" inputmode="numeric">
+<label>Host</label><input id="host" placeholder="127.0.0.1">
+<label>Autostart</label><select id="autostart"><option value="true">true</option><option value="false">false</option></select>
+<label>DoH</label><select id="doh"><option value="auto">auto</option><option value="off">off</option></select>
+<label>Max old space (MB)</label><input id="max_old_space" inputmode="numeric">
+<label>WebUI autostart</label><select id="webui_autostart"><option value="true">true</option><option value="false">false</option></select>
+<div class="row" style="margin-top:10px"><button onclick="saveSettings()">Simpan Pengaturan</button></div>
+<p><small>Kalau port/host/DoH berubah, 9Router di-restart otomatis dari WebUI ini. Dashboard bawaan tetap di port 9Router, login pakai password awal.</small></p>
 </div>
-<div class="card"><h3>Log</h3><button onclick="loadLog()" class="secondary">Muat Ulang Log</button><pre id="log"></pre></div>
-<div class="card"><h3>Hasil</h3><pre id="out"></pre></div>
+<div class="card">
+<h2>Log</h2>
+<button onclick="loadLog()" class="secondary">Muat Ulang Log</button>
+<pre id="log"></pre>
+</div>
+<div class="card">
+<h2>Hasil</h2>
+<pre id="out">Belum ada aksi.</pre>
+</div>
+</main>
 <script>
-const API = (window.location.protocol === 'file:' || window.location.hostname === '') ? 'http://127.0.0.1:20129' : '';
-async function j(path, opts){
-  const r = await fetch(API + path, opts);
-  return r.json();
-}
-async function refresh(){
+// BUG FIX v1.0.5: halaman ini bisa diserve dari tiga tempat:
+//  1) server WebUI sendiri di :20129 -> pakai path relatif (same origin)
+//  2) WebUI KernelSU (origin lain / file:) -> pakai 127.0.0.1:20129
+//  3) browser ke :20129 -> pakai path relatif
+// Versi lama memakai path relatif kalau hostname bukan kosong, jadi saat
+// dibuka dari KernelSU, fetch('/api/status') malah kena server webroot
+// KernelSU (bukan server WebUI), balasannya bukan JSON, dan halaman
+// menampilkan "Unexpected end of JSON input" padahal server sudah jalan.
+const API = (window.location.port === '20129') ? '' : 'http://127.0.0.1:20129';
+async function fetchJson(path, opts){
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 90000);
   try {
-    const d = await j('/api/status');
-    document.getElementById('status').textContent = (d.status||'') + '\nhealth: ' + (d.health ? 'ok' : 'not responding');
-    document.getElementById('links').innerHTML = 'Dashboard bawaan: <a href="' + d.dashboard + '" target="_blank">' + d.dashboard + '</a> (login pakai password awal 9Router)<br>API: ' + d.api;
-    document.getElementById('hermes').textContent = d.hermes && d.hermes.found ? ('Hermes sekarang: provider=' + d.hermes.provider + ' model=' + d.hermes.model + ' base=' + d.hermes.base_url) : 'Hermes tidak ditemukan di HP ini.';
-    if(d.settings){ for(const k of Object.keys(d.settings)){ const el=document.getElementById(k); if(el) el.value=d.settings[k]; } }
-  } catch(e){ document.getElementById('status').textContent = 'WebUI server belum jalan. Jalankan di terminal root: su -c \'9router webui\' lalu muat ulang halaman ini. (' + e + ')'; }
+    const r = await fetch(API + path, { ...opts, signal: ctrl.signal });
+    const text = await r.text();
+    try { return JSON.parse(text); } catch (e) { return { ok: false, output: 'Server membalas bukan JSON (' + r.status + '): ' + text.slice(0, 200) }; }
+  } catch (e) {
+    return { ok: false, output: 'Gagal menghubungi server WebUI di ' + (API || 'server ini') + ': ' + e + '. Pastikan server jalan: su -c \'9router webui status\'.' };
+  } finally { clearTimeout(timer); }
+}
+function setOut(text){ document.getElementById('out').textContent = text; }
+async function refresh(){
+  const d = await fetchJson('/api/status');
+  const badge = document.getElementById('badge');
+  if(!d.status){ document.getElementById('status').textContent = d.output || 'Gagal memuat status.'; badge.textContent = 'server tidak terjangkau'; badge.className = 'pill bad'; return; }
+  const running = /running/.test(d.status);
+  badge.textContent = running ? 'jalan' : 'berhenti'; badge.className = 'pill ' + (running ? 'ok' : 'bad');
+  document.getElementById('status').textContent = d.status + '\nhealth: ' + (d.health ? 'ok' : 'not responding');
+  document.getElementById('links').innerHTML = 'Dashboard bawaan: <a href="' + d.dashboard + '" target="_blank">' + d.dashboard + '</a><br>API: ' + d.api;
+  document.getElementById('hermes').textContent = d.hermes && d.hermes.found ? ('Hermes sekarang: provider=' + d.hermes.provider + ' model=' + d.hermes.model) : 'Hermes tidak ditemukan di HP ini.';
+  if(d.settings){ for(const k of Object.keys(d.settings)){ const el=document.getElementById(k); if(el) el.value=d.settings[k]; } }
 }
 async function call(path){
-  document.getElementById('out').textContent = 'Menjalankan...';
-  const d = await j(path,{method:'POST'}); document.getElementById('out').textContent = d.output || JSON.stringify(d); refresh(); loadLog();
+  setOut('Menjalankan...');
+  try { const d = await fetchJson(path,{method:'POST'}); setOut(d.output || JSON.stringify(d)); } catch(e){ setOut('Error: ' + e); }
+  refresh(); loadLog();
 }
-async function loadLog(){ try{ const d = await j('/api/log'); document.getElementById('log').textContent = d.log || ''; }catch(e){} }
+async function loadLog(){ const d = await fetchJson('/api/log'); document.getElementById('log').textContent = d.log || d.output || ''; }
 async function loadModels(){
-  document.getElementById('out').textContent = 'Memuat model...';
-  const d = await j('/api/models'); document.getElementById('out').textContent = d.output || '';
+  setOut('Memuat model...');
+  const d = await fetchJson('/api/models'); setOut(d.output || '');
   const sel = document.getElementById('model'); sel.innerHTML = '';
   (d.models||[]).forEach(m => { const o=document.createElement('option'); o.value=m; o.textContent=m; sel.appendChild(o); });
 }
 async function saveProvider(){
   const model = document.getElementById('modelManual').value.trim() || document.getElementById('model').value;
   const key = document.getElementById('apiKey').value.trim();
-  if(!model){ document.getElementById('out').textContent = 'Pilih atau ketik model dulu.'; return; }
-  document.getElementById('out').textContent = 'Menyimpan provider ke Hermes...';
-  const d = await j('/api/link-hermes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model, key})});
-  document.getElementById('out').textContent = d.output || JSON.stringify(d); document.getElementById('apiKey').value=''; refresh();
+  if(!model){ setOut('Pilih atau ketik model dulu.'); return; }
+  setOut('Menyimpan provider ke Hermes...');
+  const d = await fetchJson('/api/link-hermes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model, key})});
+  setOut(d.output || JSON.stringify(d)); document.getElementById('apiKey').value=''; refresh();
 }
 async function saveSettings(){
   const data={};
   for(const k of ['port','host','autostart','doh','max_old_space','webui_autostart']){ const el=document.getElementById(k); if(el && el.value) data[k]=el.value; }
-  const d = await j('/api/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
-  document.getElementById('out').textContent = d.output || JSON.stringify(d); refresh();
+  setOut('Menyimpan pengaturan...');
+  const d = await fetchJson('/api/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+  setOut(d.output || JSON.stringify(d)); refresh();
 }
 refresh(); loadLog();
 </script>
